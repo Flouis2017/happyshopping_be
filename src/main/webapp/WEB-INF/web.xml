@@ -1,7 +1,61 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+			http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+		version="3.1" metadata-complete="true">
+		
+	<display-name>Archetype Created Web Application</display-name>
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
+    <!-- 字符集过滤器:解决中文乱码问题 -->
+    <filter>
+        <filter-name>characterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>characterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- Web容器(Tomcat)启动和关闭的监听器，也只负责监听Web容器启动和关闭事件 -->
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <!-- 这个监听器的作用是整合Web容器和Spring(IOC)容器，也是决定Spring容器何时启动何时关闭的监听器：
+         当Web容器启动时，该监听器通知Spring容器进行启动；当Web容器关闭时，通知Spring容器进行关闭。-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- ContextLoaderListener，即上述的监听器会根据这里的上下文参数来加载Spring主配置文件，使Spring在系统中运作起来 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:applicationContext.xml
+        </param-value>
+    </context-param>
+
+    <!-- Spring MVC 拦截器 配置-->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
 </web-app>
+
