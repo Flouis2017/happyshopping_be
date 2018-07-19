@@ -78,7 +78,12 @@
         </property>
     </bean>
 
-    <!-- mybatis的一个bean用于识别Dao层，缺少这个bean组件，就无法向Service层注入mapper对象 -->
+    <!-- 
+    	这个配置至关重要！这个bean的配置是将Dao层和mapper.xml文件进行关联。Dao层中只有
+    	每个pojo对应的mapper接口，自己没有实现类(具体实现都是写在xml文件中)，所以我们不能
+    	使用关键字new来创建Dao层的mapper对象，只能使用Spring的依赖注入在需要的地方注入mapper
+    	对象，而此时如果没有以下配置，就无法完成依赖注入，我们也就无法使用Dao层来操作数据库。
+    -->
     <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.happyshopping.dao"/>
     </bean>
