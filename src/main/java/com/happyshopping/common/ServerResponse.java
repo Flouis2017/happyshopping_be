@@ -28,6 +28,9 @@ public class ServerResponse<T> implements Serializable {
 	public T getData(){
 		return this.data;
 	}
+	public void setData(T data){
+		this.data = data;
+	}
 	
 	@JsonIgnore
 	public boolean isSuccess(){
@@ -69,6 +72,11 @@ public class ServerResponse<T> implements Serializable {
 	//无交互数据的success生成器(Create response by success without data)
 	public static <T> ServerResponse<T> createBySuccess(String msg){
 		return new ServerResponse<T>(ResponseCode.SUCCESS.getCode(), msg, null);
+	}
+	
+	//无提示信息的success生成器(Create response by success without message)
+	public static <T> ServerResponse<T> createBySuccess(T data){
+		return new ServerResponse<T>(ResponseCode.SUCCESS.getCode(), null, data);
 	}
 	
 	//fail生成器(Create response by fail)

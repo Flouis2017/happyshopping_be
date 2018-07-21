@@ -25,4 +25,10 @@ public interface UserMapper {
 	int checkEmail(String email);
 
 	User selectLoginUser(@Param("username")String username, @Param("md5pwd")String md5pwd);
+
+	int checkPassword(@Param("username")String username, @Param("md5pwd")String password);
+
+	int resetPassword(@Param("username")String username, @Param("md5newPwd")String password);
+
+	int checkEmailById(@Param("userId")Integer id, @Param("email")String email);
 }

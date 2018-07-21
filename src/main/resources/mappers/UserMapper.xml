@@ -168,4 +168,19 @@
   	where username = #{username} and password = #{md5pwd}
   </select>
   
+  <select id="checkPassword" resultType="int" parameterType="map">
+  	select count(1) from hs_user 
+  	where username = #{username} and password = #{md5pwd}
+  </select>
+  
+  <update id="resetPassword" parameterType="map">
+  	update hs_user set password = #{md5newPwd}
+  	where username = #{username}
+  </update>
+  
+  <select id="checkEmailById" resultType="int" parameterType="map">
+  	select count(1) from hs_user 
+  	where id != #{userId} and email = #{email}
+  </select>
+  
 </mapper>

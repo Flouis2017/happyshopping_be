@@ -12,4 +12,14 @@ public interface IUserService {
 
 	ServerResponse<User> login(String username, String password);
 
+	ServerResponse<Boolean> checkAccount(String type, String str);
+
+	ServerResponse<String> register(User user);
+
+	ServerResponse<String> resetPassword(String username, String password, String newPassword);
+
+	ServerResponse<User> updateUserInfo(User user);
+
+	ServerResponse<User> getUserInfoById(Integer id);
+
 }
