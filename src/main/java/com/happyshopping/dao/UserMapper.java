@@ -31,4 +31,10 @@ public interface UserMapper {
 	int resetPassword(@Param("username")String username, @Param("md5newPwd")String password);
 
 	int checkEmailById(@Param("userId")Integer id, @Param("email")String email);
+
+	String getQuestionByUsername(String username);
+
+	int checkSecretAnswer(@Param("username")String username, @Param("answer")String answer);
+
+	int updatePassword(@Param("username")String username, @Param("md5Password")String md5Password);
 }

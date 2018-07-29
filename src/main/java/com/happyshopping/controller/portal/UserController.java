@@ -141,5 +141,38 @@ public class UserController {
 		return result;
 	}
 	
+	/**
+	 * @Description:get secret question to find back password
+	 * @param username
+	 * @return
+	 */
+	@RequestMapping(value = "get_secret_question.do", method = RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse<String> getSecretQuestion(String username){
+		return this.iUserService.getSecrectQuestion(username);
+	}
 	
+	/**
+	 * @Description:check secret answer and question if they match each other then allow user reset password
+	 * @param username
+	 * @param answer
+	 * @return
+	 */
+	@RequestMapping(value = "check_secret_answer.do", method = RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse<String> checkSecretAnswer(String username, String answer){
+		return this.iUserService.checkSecretAnswer(username, answer);
+	}
+	
+	/**
+	 * @Description:reset password after passing validation of secret question
+	 * @param username
+	 * @param newPassword
+	 * @return
+	 */
+	@RequestMapping(value = "reset_forgotten_password.do", method = RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse<String> resetForgottenPassword(String username, String newPassword){
+		return this.iUserService.resetForgottenPassword(username, newPassword);
+	}
 }

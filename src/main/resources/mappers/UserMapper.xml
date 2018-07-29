@@ -183,4 +183,19 @@
   	where id != #{userId} and email = #{email}
   </select>
   
+  <select id="getQuestionByUsername" resultType="string" parameterType="string">
+  	select question from hs_user where username = #{username}
+  </select>
+  
+  <select id="checkSecretAnswer" resultType="int" parameterType="map">
+  	select count(1) from hs_user 
+  	where username = #{username} and answer = #{answer} 
+  </select>
+  
+  <update id="updatePassword" parameterType="map">
+  	update hs_user set password = #{md5Password}
+  	where username = #{username}
+  </update>
+  
+  
 </mapper>

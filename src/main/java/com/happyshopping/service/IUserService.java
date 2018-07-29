@@ -22,4 +22,10 @@ public interface IUserService {
 
 	ServerResponse<User> getUserInfoById(Integer id);
 
+	ServerResponse<String> getSecrectQuestion(String username);
+
+	ServerResponse<String> checkSecretAnswer(String username, String answer);
+
+	ServerResponse<String> resetForgottenPassword(String username, String newPassword);
+
 }

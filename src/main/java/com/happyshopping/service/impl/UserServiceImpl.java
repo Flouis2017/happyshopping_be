@@ -148,6 +148,57 @@ public class UserServiceImpl implements IUserService {
 		user.setPassword(StringUtils.EMPTY);
 		return ServerResponse.createBySuccess(user);
 	}
+
+
+	/**
+	 * get secret question to find password back
+	 */
+	public ServerResponse<String> getSecrectQuestion(String username) {
+		// check username is existed or not:
+		if (!this.checkIsExisted(Const.USERNAME, username).getData()){
+			return ServerResponse.createByFail("用户不存在");
+		}
+		String question = this.userMapper.getQuestionByUsername(username);
+		if (StringUtils.isNoneBlank(question)){
+			return ServerResponse.createBySuccess(null, question);
+		}
+		return ServerResponse.createByFail("密保问题为空");
+	}
+
+	/**
+	 * check secret answer
+	 */
+	public ServerResponse<String> checkSecretAnswer(String username, String answer) {
+		// check username is existed or not:
+		if (!this.checkIsExisted(Const.USERNAME, username).getData()){
+			return ServerResponse.createByFail("用户不存在");
+		}
+		int resCnt = this.userMapper.checkSecretAnswer(username, answer);
+		if (resCnt>0){
+			return ServerResponse.createBySuccess("密保校验通过");
+		} else {
+			return ServerResponse.createByFail("回答错误");
+		}
+	}
+
+	/**
+	 * reset password after checking secret question 
+	 */
+	public ServerResponse<String> resetForgottenPassword(String username, String newPassword) {
+		// check username is existed or not:
+		if (!this.checkIsExisted(Const.USERNAME, username).getData()){
+			return ServerResponse.createByFail("用户不存在");
+		}
+		
+		// update password:
+		String md5Password = MD5Util.MD5EncodeUtf8(newPassword);
+		int resCnt = this.userMapper.updatePassword(username, md5Password);
+		if (resCnt>0){
+			return ServerResponse.createBySuccess("密码重置成功");
+		} else {
+			return ServerResponse.createByFail("服务端出错，密码重置失败");
+		}
+	}
 	
 	
 	
