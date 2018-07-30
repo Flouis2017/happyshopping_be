@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.happyshopping.common.Const;
 import com.happyshopping.common.ResponseCode;
 import com.happyshopping.common.ServerResponse;
+import com.happyshopping.common.TokenCache;
 import com.happyshopping.dao.UserMapper;
 import com.happyshopping.pojo.User;
 import com.happyshopping.service.IUserService;
@@ -109,12 +110,12 @@ public class UserServiceImpl implements IUserService {
 			// 进行update操作：
 			int count2 = this.userMapper.resetPassword(username, MD5Util.MD5EncodeUtf8(newPassword));
 			if (count2>0){
-				return ServerResponse.createBySuccess("密码重置成功");
+				return ServerResponse.createBySuccess("密码修改成功");
 			}
 		} else {
 			return ServerResponse.createByFail("旧密码错误");
 		}
-		return ServerResponse.createByFail("密码重置出错，请联系客服");
+		return ServerResponse.createByFail("服务器出错，密码修改失败");
 	}
 
 
@@ -132,7 +133,7 @@ public class UserServiceImpl implements IUserService {
 		if (count>0){
 			return ServerResponse.createBySuccess("更新成功");
 		}
-		return ServerResponse.createByFail("更新失败，请联系客服");
+		return ServerResponse.createByFail("服务器出错，更新失败");
 	}
 
 
@@ -168,14 +169,25 @@ public class UserServiceImpl implements IUserService {
 	/**
 	 * check secret answer
 	 */
-	public ServerResponse<String> checkSecretAnswer(String username, String answer) {
+	public ServerResponse<String> checkSecretAnswer(String username, String answer, String securityCode) {
 		// check username is existed or not:
 		if (!this.checkIsExisted(Const.USERNAME, username).getData()){
 			return ServerResponse.createByFail("用户不存在");
 		}
+		
+		// check if security is blank
+		// 基本上不会出现，因为前端页面验证码输入框为空的话，无法回答密保问题，直接就无法提交
+		// 密保问题，根本就无法执行到这里，但是以防万一和测试，这里也做一个校验：
+		if (StringUtils.isBlank(securityCode)){
+			return ServerResponse.createByFail("验证码不允许为空");
+		}
 		int resCnt = this.userMapper.checkSecretAnswer(username, answer);
 		if (resCnt>0){
-			return ServerResponse.createBySuccess("密保校验通过");
+			//passing validation of secret question set token and respond it to wait user reset pwd
+			//token generation rule is securityCode + suffix
+			String token = securityCode + TokenCache.TOKEN_SUFFIX;
+			TokenCache.setCache(TokenCache.TOKEN_PRIFIX + username, token);
+			return ServerResponse.createBySuccess("密保问题回答正确", token);
 		} else {
 			return ServerResponse.createByFail("回答错误");
 		}
@@ -184,20 +196,36 @@ public class UserServiceImpl implements IUserService {
 	/**
 	 * reset password after checking secret question 
 	 */
-	public ServerResponse<String> resetForgottenPassword(String username, String newPassword) {
+	public ServerResponse<String> resetForgottenPassword(String username, String newPassword, String token) {
+		// check the received token is blank or not
+		if (StringUtils.isBlank(token)){
+			return ServerResponse.createByFail("参数错误，token需要传递");
+		}
+		
 		// check username is existed or not:
 		if (!this.checkIsExisted(Const.USERNAME, username).getData()){
 			return ServerResponse.createByFail("用户不存在");
 		}
 		
-		// update password:
-		String md5Password = MD5Util.MD5EncodeUtf8(newPassword);
-		int resCnt = this.userMapper.updatePassword(username, md5Password);
-		if (resCnt>0){
-			return ServerResponse.createBySuccess("密码重置成功");
-		} else {
-			return ServerResponse.createByFail("服务端出错，密码重置失败");
+		// check if local token expired
+		String localToken = TokenCache.getCache(TokenCache.TOKEN_PRIFIX + username);
+		if (StringUtils.isBlank(localToken)){
+			return ServerResponse.createByFail("token无效或已过期，请重新输入验证码");
 		}
+		
+		// reset password if token equals localToken:
+		if (StringUtils.equals(token, localToken)){
+			String md5Password = MD5Util.MD5EncodeUtf8(newPassword);
+			int resCnt = this.userMapper.updatePassword(username, md5Password);
+			if (resCnt>0){
+				return ServerResponse.createBySuccess("密码重置成功");
+			} else {
+				return ServerResponse.createByFail("服务端出错，密码重置失败");
+			}
+		} else {
+			return ServerResponse.createByFail("前后token不一致，请尝试再次找回密码");
+		}
+		
 	}
 	
 	

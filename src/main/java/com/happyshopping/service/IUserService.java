@@ -24,8 +24,8 @@ public interface IUserService {
 
 	ServerResponse<String> getSecrectQuestion(String username);
 
-	ServerResponse<String> checkSecretAnswer(String username, String answer);
+	ServerResponse<String> checkSecretAnswer(String username, String answer, String securityCode);
 
-	ServerResponse<String> resetForgottenPassword(String username, String newPassword);
+	ServerResponse<String> resetForgottenPassword(String username, String newPassword, String token);
 
 }

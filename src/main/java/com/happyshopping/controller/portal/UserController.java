@@ -160,8 +160,8 @@ public class UserController {
 	 */
 	@RequestMapping(value = "check_secret_answer.do", method = RequestMethod.POST)
 	@ResponseBody
-	public ServerResponse<String> checkSecretAnswer(String username, String answer){
-		return this.iUserService.checkSecretAnswer(username, answer);
+	public ServerResponse<String> checkSecretAnswer(String username, String answer, String securityCode){
+		return this.iUserService.checkSecretAnswer(username, answer, securityCode);
 	}
 	
 	/**
@@ -172,7 +172,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "reset_forgotten_password.do", method = RequestMethod.POST)
 	@ResponseBody
-	public ServerResponse<String> resetForgottenPassword(String username, String newPassword){
-		return this.iUserService.resetForgottenPassword(username, newPassword);
+	public ServerResponse<String> resetForgottenPassword(String username, String newPassword, String token){
+		return this.iUserService.resetForgottenPassword(username, newPassword, token);
 	}
 }
