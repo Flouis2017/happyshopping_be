@@ -179,13 +179,13 @@ public class UserServiceImpl implements IUserService {
 		// 基本上不会出现，因为前端页面验证码输入框为空的话，无法回答密保问题，直接就无法提交
 		// 密保问题，根本就无法执行到这里，但是以防万一和测试，这里也做一个校验：
 		if (StringUtils.isBlank(securityCode)){
-			return ServerResponse.createByFail("验证码不允许为空");
+			return ServerResponse.createByFail("验证码不可为空");
 		}
 		int resCnt = this.userMapper.checkSecretAnswer(username, answer);
 		if (resCnt>0){
 			//passing validation of secret question set token and respond it to wait user reset pwd
-			//token generation rule is securityCode + suffix
-			String token = securityCode + TokenCache.TOKEN_SUFFIX;
+			//token generation rule is encoding securityCode by md5
+			String token = MD5Util.MD5EncodeUtf8(securityCode);
 			TokenCache.setCache(TokenCache.TOKEN_PRIFIX + username, token);
 			return ServerResponse.createBySuccess("密保问题回答正确", token);
 		} else {
@@ -197,20 +197,22 @@ public class UserServiceImpl implements IUserService {
 	 * reset password after checking secret question 
 	 */
 	public ServerResponse<String> resetForgottenPassword(String username, String newPassword, String token) {
-		// check the received token is blank or not
-		if (StringUtils.isBlank(token)){
-			return ServerResponse.createByFail("参数错误，token需要传递");
-		}
-		
 		// check username is existed or not:
 		if (!this.checkIsExisted(Const.USERNAME, username).getData()){
 			return ServerResponse.createByFail("用户不存在");
 		}
 		
+		// check the received token is blank or not
+		if (StringUtils.isBlank(token)){
+//			return ServerResponse.createByFail("参数错误，token需要传递");
+			return ServerResponse.createByFail("验证码不可为空");
+		}
+		
 		// check if local token expired
 		String localToken = TokenCache.getCache(TokenCache.TOKEN_PRIFIX + username);
 		if (StringUtils.isBlank(localToken)){
-			return ServerResponse.createByFail("token无效或已过期，请重新输入验证码");
+//			return ServerResponse.createByFail("token无效或已过期，请重新输入验证码");
+			return ServerResponse.createByFail("验证码无效，请重新输入");
 		}
 		
 		// reset password if token equals localToken:
@@ -223,15 +225,10 @@ public class UserServiceImpl implements IUserService {
 				return ServerResponse.createByFail("服务端出错，密码重置失败");
 			}
 		} else {
-			return ServerResponse.createByFail("前后token不一致，请尝试再次找回密码");
+//			return ServerResponse.createByFail("前后token不一致，请尝试再次找回密码");
+			return ServerResponse.createByFail("验证码异常，请尝试再次找回密码");
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
 	
 }

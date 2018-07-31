@@ -19,7 +19,8 @@ public class TokenCache {
 	private static Logger logger = LoggerFactory.getLogger(TokenCache.class);
 
 	public static final String TOKEN_PRIFIX = "token_";
-	public static final String TOKEN_SUFFIX = "_"+System.currentTimeMillis();
+	
+//	public static final String TOKEN_SUFFIX = "_"+System.currentTimeMillis();
 	
 	private static LoadingCache<String, String> localCache = 
 			CacheBuilder.newBuilder().initialCapacity(1000).
