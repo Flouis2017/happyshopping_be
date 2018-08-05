@@ -90,7 +90,7 @@ public class UserController {
 	public ServerResponse<User> getCurrentUserInfo(HttpSession session){
 		User user = (User) session.getAttribute(Const.CURRENTUSER);
 		if (user==null){
-			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), "获取个人信息，请先登录");
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
 		}
 		return ServerResponse.createBySuccess(user);
 	}
@@ -108,7 +108,7 @@ public class UserController {
 			String password, String newPassword){
 		User user = (User) session.getAttribute(Const.CURRENTUSER);
 		if (user==null){
-			return ServerResponse.createByFail("用户未登录");
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
 		}
 		return this.iUserService.resetPassword(user.getUsername(), password, newPassword);
 	}
@@ -125,7 +125,7 @@ public class UserController {
 	public ServerResponse<User> updateUserInfo(HttpSession session, User user){
 		User currentUser = (User) session.getAttribute(Const.CURRENTUSER);
 		if (currentUser==null){
-			return ServerResponse.createByFail("用户未登录");
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
 		}
 		
 		//设置username和id因为这两个属性值我们不允许修改，而且也需要这两个属性作为where的条件：

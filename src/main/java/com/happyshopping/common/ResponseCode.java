@@ -12,6 +12,7 @@ public enum ResponseCode {
 	FAIL(101,"fail"),
 	NEED_LOGIN(10,"need_login"),
 	ILLEGAL_ARGUMENT(2,"illegal_argument"),
+	NO_PERMISSION(17,"no_permission"),
 	COMMON(50,"common");
 	
 	private final int code;

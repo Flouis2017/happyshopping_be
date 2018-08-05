@@ -28,4 +28,7 @@ public interface IUserService {
 
 	ServerResponse<String> resetForgottenPassword(String username, String newPassword, String token);
 
+	ServerResponse<Boolean> checkAdminRole(User user);
+	
+	boolean isAdmin(User user);
 }

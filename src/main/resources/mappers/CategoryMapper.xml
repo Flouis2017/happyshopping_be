@@ -99,9 +99,9 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
-        update_time = now(),
-      </if>
+      <!-- <if test="updateTime != null" > -->
+        update_time = now()
+      <!-- </if> -->
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -115,4 +115,11 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectCategoryChildrenByParentId" parameterType="int" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/> 
+  	from hs_category where parent_id = #{parent_id}
+  </select>
+  
+  
 </mapper>

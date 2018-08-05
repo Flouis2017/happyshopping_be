@@ -230,5 +230,33 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 	}
+
+
+	/**
+	 * check if user is administrator
+	 */
+	public ServerResponse<Boolean> checkAdminRole(User user) {
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "用户对象为空");
+		}
+		ServerResponse<Boolean> res = ServerResponse.createResponse(ResponseCode.COMMON.getCode(), false);
+		if (user.getRole() == Const.Role.ROLE_ADMIN){
+			res.setData(true);;
+		}
+		return res;
+	}
 	
+	/**
+	 * @Description:check if current user owns administrator permission 
+	 * @param user
+	 * @return true / false
+	 */
+	public boolean isAdmin(User user){
+		boolean flag = false;
+		if (user.getRole() == Const.Role.ROLE_ADMIN){
+			flag = true;
+		} 
+		return flag;
+	}
+
 }
