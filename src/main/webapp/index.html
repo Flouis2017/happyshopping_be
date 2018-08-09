@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Test Ajax</title>
+<style type="text/css">
+	button{
+		cursor: pointer;
+	}
+</style>
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#btn_getData").click(function(){
+			$.ajax({
+				type	: 'post',
+				url		: 'http://localhost:8080/happyshopping/manage/category/get_children_categories.do',
+				dataType: 'json',
+				data	: {'categoryId':0},
+				success	: function (res) {
+	                console.log(res);
+	            },
+	            error	: function (err) {
+	                // http request error for example: 404 error
+	                console.log(err.statusText);
+	            }
+			});
+		});
+		
+		$("#btn_login").click(function(){
+			$.ajax({
+				type	: 'post',
+				url		: 'http://localhost:8080/happyshopping/manage/user/login.do',
+				dataType: 'json',
+				data	: {'username':'admin', 'password':'admin'},
+				success	: function(res){
+					console.log(res);
+				},
+				error	: function(err){
+					console.log(err.statusText);
+				}
+			});
+		});
+	});
+</script>
+</head>
+<body>
+	<h2>Hello World!</h2>
+	<button id="btn_login">login</button>
+	<button id="btn_getData">getData</button>
+</body>
+</html>
