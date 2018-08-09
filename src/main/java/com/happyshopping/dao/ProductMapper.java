@@ -1,5 +1,7 @@
 package com.happyshopping.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.happyshopping.pojo.Product;
 
 public interface ProductMapper {
@@ -14,4 +16,6 @@ public interface ProductMapper {
     int updateByPrimaryKeySelective(Product record);
 
     int updateByPrimaryKey(Product record);
+
+	int updateStatus(@Param("id")Integer id, @Param("status")Integer status);
 }

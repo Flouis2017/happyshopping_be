@@ -170,8 +170,13 @@
       price = #{price,jdbcType=DECIMAL},
       stock = #{stock,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
+      <!-- create_time = #{createTime,jdbcType=TIMESTAMP}, -->
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateStatus" parameterType="map" >
+  	update hs_product set status = #{status} , update_time = now() 
+  	where id = #{id} 
   </update>
 </mapper>

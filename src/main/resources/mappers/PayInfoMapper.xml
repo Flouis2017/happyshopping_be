@@ -123,7 +123,7 @@
       pay_platform = #{payPlatform,jdbcType=INTEGER},
       platform_number = #{platformNumber,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
+      <!-- create_time = #{createTime,jdbcType=TIMESTAMP}, -->
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
