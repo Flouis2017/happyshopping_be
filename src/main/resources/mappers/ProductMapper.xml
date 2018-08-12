@@ -179,4 +179,23 @@
   	update hs_product set status = #{status} , update_time = now() 
   	where id = #{id} 
   </update>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from hs_product order by id
+  </select>
+  
+  <select id="selectListByNameAndId" resultMap="BaseResultMap" parameterType="map">
+  	select <include refid="Base_Column_List" />
+  	from hs_product
+  	<where>
+  		<if test="productName != null">
+  			and name like #{productName}
+  		</if>
+  		<if test="productId != null">
+			and id = #{productId}  		
+  		</if>
+  	</where>
+  </select>
+  
 </mapper>

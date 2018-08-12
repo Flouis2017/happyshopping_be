@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.happyshopping.common.Const;
@@ -68,4 +69,78 @@ public class ProductManagementController {
 		}
 		return ServerResponse.createResponse(ResponseCode.NO_PERMISSION.getCode(), "无权限操作");
 	}
+	
+	/**
+	 * @Description:get product detailed info
+	 * @param session
+	 * @param productId
+	 * @param status
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="detail.do", method=RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse getDetail(HttpSession session, Integer productId){
+		User user = (User) session.getAttribute(Const.CURRENTUSER);
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+		}
+		if (this.iUserService.isAdmin(user)){
+			// do query of product detail
+			return this.iProductService.getDetail(productId);
+		}
+		return ServerResponse.createResponse(ResponseCode.NO_PERMISSION.getCode(), "无权限操作");
+	}
+	
+	
+	/**
+	 * @Description:paging query product list
+	 * @param session
+	 * @param productId
+	 * @param status
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="list.do", method=RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse getProductList(HttpSession session, 
+			@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, 
+			@RequestParam(value = "pageSize", defaultValue = "10") int pageSize){
+		User user = (User) session.getAttribute(Const.CURRENTUSER);
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+		}
+		if (this.iUserService.isAdmin(user)){
+			return this.iProductService.getProductList(pageNum, pageSize);
+		}
+		return ServerResponse.createResponse(ResponseCode.NO_PERMISSION.getCode(), "无权限操作");
+	}
+	
+	
+	/**
+	 * @Description:paging query product list
+	 * @param session
+	 * @param productId
+	 * @param status
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="search_products.do", method=RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse searchProducts(HttpSession session, 
+			String productName, Integer productId, 
+			@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, 
+			@RequestParam(value = "pageSize", defaultValue = "10") int pageSize){
+		User user = (User) session.getAttribute(Const.CURRENTUSER);
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+		}
+		if (this.iUserService.isAdmin(user)){
+			return this.iProductService.searchProducts(productName, productId, pageNum, pageSize);
+		}
+		return ServerResponse.createResponse(ResponseCode.NO_PERMISSION.getCode(), "无权限操作");
+	}
+	
+	
+	
 }
