@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Test Ajax</title>
+<title>Index</title>
 <style type="text/css">
 	button{
 		cursor: pointer;
@@ -18,7 +18,7 @@
 				dataType: 'json',
 				data	: {'categoryId':0},
 				success	: function (res) {
-	                console.log(res);
+	                console.log(res.data);
 	            },
 	            error	: function (err) {
 	                // http request error for example: 404 error
@@ -34,7 +34,7 @@
 				dataType: 'json',
 				data	: {'username':'admin', 'password':'admin'},
 				success	: function(res){
-					console.log(res);
+					console.log(res.data);
 				},
 				error	: function(err){
 					console.log(err.statusText);
@@ -48,5 +48,20 @@
 	<h2>Hello World!</h2>
 	<button id="btn_login">login</button>
 	<button id="btn_getData">getData</button>
+	<br><br>
+	SpringMVC 上传文件
+	<form name="form1" action="http://localhost:8080/happyshopping/manage/product/upload.do" 
+		  method="post" enctype="multipart/form-data">
+		<input type="file" name="file" />
+		<input type="submit" value="SpringMVC上传文件"/>
+	</form>
+	
+	<br><br>
+	富文本图片 上传
+	<form name="form1" action="http://localhost:8080/happyshopping/manage/product/richtext_image_upload.do" 
+		  method="post" enctype="multipart/form-data">
+		<input type="file" name="file" />
+		<input type="submit" value="富文本图片上传"/>
+	</form>
 </body>
 </html>
