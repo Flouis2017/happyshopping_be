@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	public ServerResponse<String> addCategory(String categoryName, Integer parentId) {
 		// check if parameters are valid
 		if ( StringUtils.isBlank(categoryName) || parentId == null ){
-			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数错误");
+			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数出错");
 		}
 		
 		// build new insert category object
@@ -54,7 +54,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	 */
 	public ServerResponse<String> setCategoryName(Integer categoryId, String categoryName) {
 		if (categoryId==null || StringUtils.isBlank(categoryName)){
-			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数错误");
+			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数出错");
 		}
 		Category category = new Category();
 		category.setId(categoryId);

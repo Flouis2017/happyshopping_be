@@ -237,7 +237,7 @@ public class UserServiceImpl implements IUserService {
 	 */
 	public ServerResponse<Boolean> checkAdminRole(User user) {
 		if (user == null){
-			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "用户对象为空");
+			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数出错，用户对象为空");
 		}
 		ServerResponse<Boolean> res = ServerResponse.createResponse(ResponseCode.COMMON.getCode(), false);
 		if (user.getRole() == Const.Role.ROLE_ADMIN){

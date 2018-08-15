@@ -18,7 +18,7 @@
 				dataType: 'json',
 				data	: {'categoryId':0},
 				success	: function (res) {
-	                console.log(res.data);
+	                console.log(res);
 	            },
 	            error	: function (err) {
 	                // http request error for example: 404 error
@@ -34,7 +34,7 @@
 				dataType: 'json',
 				data	: {'username':'admin', 'password':'admin'},
 				success	: function(res){
-					console.log(res.data);
+					console.log(res);
 				},
 				error	: function(err){
 					console.log(err.statusText);

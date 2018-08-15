@@ -1,5 +1,9 @@
 package com.happyshopping.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.happyshopping.pojo.Cart;
 
 public interface CartMapper {
@@ -14,4 +18,10 @@ public interface CartMapper {
     int updateByPrimaryKeySelective(Cart record);
 
     int updateByPrimaryKey(Cart record);
+
+	Cart selectByUserIdAndProductId(@Param("userId")Integer userId, @Param("productId")Integer productId);
+
+	int selectUncheckedCountByUserId(Integer userId);
+
+	List<Cart> selectCartByUserId(Integer userId);
 }
