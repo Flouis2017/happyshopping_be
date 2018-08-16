@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.happyshopping.common.Const;
 import com.happyshopping.common.ResponseCode;
@@ -127,6 +128,60 @@ public class CartServiceImpl implements ICartService {
 			return false;
 		}
 		return this.cartMapper.selectUncheckedCountByUserId(userId) == 0;
+	}
+
+	/**
+	 * update product info in cart
+	 */
+	public ServerResponse<CartVO> update(Integer userId, Integer productId, Integer count) {
+		if (productId == null || count == null){
+			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数出错");
+		}
+		Cart cart = this.cartMapper.selectByUserIdAndProductId(userId, productId);
+		if (cart != null){
+			int res = this.cartMapper.updateQuantityById(cart.getId(),count);
+			if (res <= 0){
+				return ServerResponse.createByFail("服务器出错，购物车更新失败");
+			}
+		}
+		return this.getCartVO(userId);
+	}
+
+	/**
+	 * remove products from cart
+	 */
+	public ServerResponse<CartVO> removeProducts(Integer userId, String productIds) {
+		// use Guava to split string of productIds to a List
+		List<String> productIdList = Splitter.on(",").splitToList(productIds);
+		if (CollectionUtils.isEmpty(productIdList)){
+			return ServerResponse.createResponse(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数出错");
+		}
+		int res = this.cartMapper.deleteByUserIdAndProductIdList(userId, productIdList);
+		if (res <= 0){
+			return ServerResponse.createByFail("服务器出错，商品移除失败"); 
+		}
+		return this.getCartVO(userId);
+	}
+
+	/**
+	 * get total product quantity without differentiating product type
+	 */
+	public ServerResponse<Integer> getCartProductCount(Integer userId) {
+		if (userId == null){
+			return ServerResponse.createBySuccess(0);
+		}
+		return ServerResponse.createBySuccess(this.cartMapper.getCartProductCount(userId));
+	}
+	
+	/**
+	 * select or un_select
+	 */
+	public ServerResponse<CartVO> selectOrUnselect(Integer userId, Integer productId, Integer isChecked){
+		int res = this.cartMapper.checkOrUncheckProduct(userId, productId, isChecked);
+		if (res <= 0){
+			return ServerResponse.createByFail("服务器出错");
+		}
+		return this.getCartVO(userId);
 	}
 
 }

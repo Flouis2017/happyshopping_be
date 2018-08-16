@@ -131,4 +131,33 @@
   	from hs_cart where user_id = #{userId}
   </select>
   
+  <update id="updateQuantityById" parameterType="map">
+  	update hs_cart set quantity = #{quantity},update_time = now() where id = #{id}
+  </update>
+  
+  <delete id="deleteByUserIdAndProductIdList" parameterType="map">
+  	delete from hs_cart where user_id = #{userId}
+  	<if test="productIdList != null">
+  		and product_id in
+  		<foreach collection="productIdList" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+  		</foreach>
+  	</if>
+  </delete>
+  
+  <select id="getCartProductCount" parameterType="int" resultType="int">
+  	select IFNULL(SUM(quantity),0) as count from hs_cart
+	where user_id = #{userId}
+  </select>
+  
+  <update id="checkOrUncheckProduct" parameterType="map">
+  	update hs_cart
+  	set update_time = now(),
+  	checked = #{checked}
+  	where user_id = #{userId}
+  	<if test="productId != null">
+  		and product_id = #{productId}
+  	</if>
+  </update>
+  
 </mapper>
