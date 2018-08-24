@@ -82,16 +82,16 @@ public class FTPUtil {
 		if (this.connectFTPServer(this.ip, this.port, this.user, this.pwd)){
 			try{
 				// change directory
-//				System.out.println(this.ftpClient.changeWorkingDirectory(remotePath));
-				this.ftpClient.changeWorkingDirectory(remotePath);
+				System.out.println(this.ftpClient.changeWorkingDirectory(remotePath));
+//				this.ftpClient.changeWorkingDirectory(remotePath);
 				this.ftpClient.setBufferSize(1024);
 				this.ftpClient.setControlEncoding("UTF-8");
 				this.ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 				this.ftpClient.enterLocalPassiveMode();
 				for (File fileItem : fileList){
 					fis = new FileInputStream(fileItem);
-//					System.out.println(this.ftpClient.storeFile(fileItem.getName(), fis));
-					this.ftpClient.storeFile(fileItem.getName(), fis);
+					System.out.println(this.ftpClient.storeFile(fileItem.getName(), fis));
+//					this.ftpClient.storeFile(fileItem.getName(), fis);
 				}
 			} catch(IOException e){
 				logger.error("uploading file to FTP server occurs error",e);
@@ -116,6 +116,7 @@ public class FTPUtil {
 	public static boolean uploadToFTPServer(List<File> fileList) throws IOException{
 		FTPUtil ftpUtil = new FTPUtil(ftpIP,ftpPort,ftpUser,ftpPwd);
 		logger.info("start connecting FTP server");
+//		boolean res = ftpUtil.upload("img", fileList);
 		boolean res = ftpUtil.upload("/", fileList);
 		logger.info("finish uploading, disconnect FTP server");
 		return res;

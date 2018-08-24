@@ -173,7 +173,7 @@ public class ProductManagementController {
 		if (this.iUserService.isAdmin(user)){
 			// Firstly, we get the dir path in Tomcat server, file will temporarily store there
 			// D:/Tomcat/eclipse-mars-tomcat-8.0.52/wtpwebapps/happyshopping/upload
-			String path = request.getSession().getServletContext().getRealPath("upload");
+			String path = request.getSession().getServletContext().getRealPath(Const.UPLOAD_DIR);
 			// upload file
 			String targetFileName = this.iFileService.upload(file, path);
 			// combine url string
@@ -216,7 +216,7 @@ public class ProductManagementController {
 			return resultMap;
 		}
 		if (this.iUserService.isAdmin(user)){
-			String path = request.getSession().getServletContext().getRealPath("upload");
+			String path = request.getSession().getServletContext().getRealPath(Const.UPLOAD_DIR);
 			String targetFileName = this.iFileService.upload(file, path);
 			if (StringUtils.isBlank(targetFileName)){
 				resultMap.put("success", false);
