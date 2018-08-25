@@ -19,9 +19,11 @@ public interface ProductMapper {
 
     int updateByPrimaryKey(Product record);
 
-	int updateStatus(@Param("id")Integer id, @Param("status")Integer status);
+	int updateStatus(@Param("id") Integer id, @Param("status") Integer status);
 
 	List<Product> selectList();
 
-	List<Product> selectListByNameAndId(@Param("productName")String productName, @Param("productId")Integer productId);
+	List<Product> selectListByNameAndId(@Param("productName") String productName, @Param("productId") Integer productId);
+
+	void updateStock(@Param("id") Integer id, @Param("stock") int stock);
 }

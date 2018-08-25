@@ -78,4 +78,70 @@ public class Const {
 			return this.code;
 		}
 	}
+	
+	public enum ProductStatusEnum{
+		ON_SALE(1,"销售中"),
+		OFF_SHELVE(0,"下架");
+		
+		ProductStatusEnum(int code, String value){
+			this.code = code;
+			this.value = value;
+		}
+		private String value;
+		private int code;
+		
+		public String getValue(){
+			return this.value;
+		}
+		public int getCode(){
+			return this.code;
+		}
+	}
+	
+	public enum PostageEnum{
+		YUAN(0,"元"),
+		DOLLAR(1,"美元");
+		
+		PostageEnum(int code, String value){
+			this.code = code;
+			this.value = value;
+		}
+		private String value;
+		private int code;
+		
+		public String getValue(){
+			return this.value;
+		}
+		public int getCode(){
+			return this.code;
+		}
+	}
+	
+	public enum PaymentTypeEnum{
+		ONLINE(1,"在线支付");
+		
+		PaymentTypeEnum(int code, String value){
+			this.code = code;
+			this.value = value;
+		}
+		private String value;
+		private int code;
+		
+		public String getValue(){
+			return this.value;
+		}
+		public int getCode(){
+			return this.code;
+		}
+		
+		public static PaymentTypeEnum codeOf(int code){
+            for(PaymentTypeEnum paymentTypeEnum : values()){
+                if(paymentTypeEnum.getCode() == code){
+                    return paymentTypeEnum;
+                }
+            }
+            throw new RuntimeException("无对应的枚举");
+        }
+	}
+	
 }

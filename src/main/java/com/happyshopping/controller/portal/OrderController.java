@@ -24,6 +24,7 @@ import com.happyshopping.common.ServerResponse;
 import com.happyshopping.pojo.User;
 import com.happyshopping.service.IOrderService;
 
+@SuppressWarnings("rawtypes")
 @Controller
 @RequestMapping("/order/")
 public class OrderController {
@@ -33,7 +34,17 @@ public class OrderController {
 	@Autowired
 	private IOrderService iOrderService;
 	
-	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "create.do", method = RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse create(HttpSession session, Integer shippingId){
+		User user = (User) session.getAttribute(Const.CURRENTUSER);
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), 
+					ResponseCode.NEED_LOGIN.getDescription());
+		}
+		return this.iOrderService.create(user.getId(), shippingId);
+	}
+	
 	@RequestMapping(value = "pay.do", method = RequestMethod.POST)
 	@ResponseBody
 	public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request){
@@ -45,13 +56,12 @@ public class OrderController {
 		return this.iOrderService.pay(user.getId(), orderNo, path);
 	}
 	
-	/**
+	/** TODO 支付成功后却无法执行回调函数？
 	 * @Description:这里参照支付宝回调函数的要求返回一个Object对象，参数也只能有一个HttpServletRequest
 	 * 因为经过支付宝回调函数之后所有需要的参数都会被存放在request中
 	 * @param request
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "alipay_callback.do", method = RequestMethod.POST)
 	@ResponseBody
 	public Object alipayCallback(HttpServletRequest request){
@@ -61,7 +71,7 @@ public class OrderController {
 		
 		StringBuilder sb = new StringBuilder();
 		//使用迭代器来遍历参数map
-		Iterator iterator = parameterMap.entrySet().iterator();
+		Iterator iterator = parameterMap.keySet().iterator();
 		while (iterator.hasNext()){
 			String key = (String) iterator.next();
 			String[] values = (String[]) parameterMap.get(key);
@@ -95,14 +105,14 @@ public class OrderController {
 		return Const.AlipayCallback.RESPONSE_FAIL;
 	}
 	
-	@RequestMapping(value = "order_is_paid.do", method = RequestMethod.POST)
+	@RequestMapping(value = "query_order_is_paid.do", method = RequestMethod.POST)
 	@ResponseBody
-	public ServerResponse<Boolean> orderIsPaid(HttpSession session, Long orderNo){
+	public ServerResponse<Boolean> queryOrderIsPaid(HttpSession session, Long orderNo){
 		User user = (User) session.getAttribute(Const.CURRENTUSER);
 		if (user == null){
 			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDescription());
 		}
-		return this.iOrderService.orderIsPaid(user.getId(), orderNo);
+		return this.iOrderService.queryOrderIsPaid(user.getId(), orderNo);
 	}
 	
 }

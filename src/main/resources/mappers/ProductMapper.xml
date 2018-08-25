@@ -198,4 +198,10 @@
   	</where>
   </select>
   
+  <update id="updateStock" parameterType="map">
+  	update hs_product 
+  	set stock = #{stock} , update_time = now()
+  	where id = #{id}
+  </update>
+  
 </mapper>
