@@ -1,5 +1,7 @@
 package com.happyshopping.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.happyshopping.pojo.Order;
@@ -20,4 +22,8 @@ public interface OrderMapper {
 	Order selectByUserIdAndOrderNo(@Param("userId") Integer userId, @Param("orderNo") Long orderNo);
 
 	Order selectByOrderNo(Long orderNo);
+
+	int updateOrderStatus(@Param("id") Integer id, @Param("status") int status);
+
+	List<Order> selectByUserId(Integer userId);
 }

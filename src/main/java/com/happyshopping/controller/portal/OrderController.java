@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alipay.api.AlipayApiException;
@@ -45,6 +46,41 @@ public class OrderController {
 		return this.iOrderService.create(user.getId(), shippingId);
 	}
 	
+	@RequestMapping(value = "cancel.do",method = RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse cancel(HttpSession session, Long orderNo){
+		User user = (User) session.getAttribute(Const.CURRENTUSER);
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), 
+					ResponseCode.NEED_LOGIN.getDescription());
+		}
+		return this.iOrderService.cancel(user.getId(), orderNo);
+	}
+	
+	@RequestMapping(value = "detail.do",method = RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse detail(HttpSession session, Long orderNo){
+		User user = (User) session.getAttribute(Const.CURRENTUSER);
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), 
+					ResponseCode.NEED_LOGIN.getDescription());
+		}
+		return this.iOrderService.getOrderDetail(user.getId(), orderNo);
+	}
+	
+	@RequestMapping(value = "list.do",method = RequestMethod.POST)
+	@ResponseBody
+	public ServerResponse list(HttpSession session, 
+			@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, 
+			@RequestParam(value = "pageSize", defaultValue = "10") int pageSize){
+		User user = (User) session.getAttribute(Const.CURRENTUSER);
+		if (user == null){
+			return ServerResponse.createResponse(ResponseCode.NEED_LOGIN.getCode(), 
+					ResponseCode.NEED_LOGIN.getDescription());
+		}
+		return this.iOrderService.getOrderList(user.getId(), pageNum, pageSize);
+	}
+	
 	@RequestMapping(value = "pay.do", method = RequestMethod.POST)
 	@ResponseBody
 	public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request){
@@ -56,7 +92,7 @@ public class OrderController {
 		return this.iOrderService.pay(user.getId(), orderNo, path);
 	}
 	
-	/** TODO 支付成功后却无法执行回调函数？
+	/** 
 	 * @Description:这里参照支付宝回调函数的要求返回一个Object对象，参数也只能有一个HttpServletRequest
 	 * 因为经过支付宝回调函数之后所有需要的参数都会被存放在request中
 	 * @param request

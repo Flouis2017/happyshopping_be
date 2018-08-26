@@ -209,4 +209,14 @@
   	where order_no = #{orderNo}
   </select>
   
+  <update id="updateOrderStatus" parameterType="map">
+  	update hs_order set status = #{status},
+  	update_time = now() where id = #{id}
+  </update>
+  
+  <select id="selectByUserId" parameterType="int" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from hs_order where user_id = #{userId}
+  	order by create_time desc
+  </select>
 </mapper>

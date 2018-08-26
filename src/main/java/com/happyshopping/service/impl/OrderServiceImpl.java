@@ -25,6 +25,8 @@ import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.alipay.demo.trade.utils.ZxingUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.happyshopping.common.Const;
@@ -273,7 +275,7 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		List<OrderItem> orderItemList = (List<OrderItem>) serverResponse.getData();
 		if (CollectionUtils.isEmpty(orderItemList)){
-			return ServerResponse.createByFail("购物车为空");
+			return ServerResponse.createByFail("购物车中无待下单商品");
 		}
 		BigDecimal paymentAmount = this.getPaymentAmount(orderItemList);
 		
@@ -363,7 +365,7 @@ public class OrderServiceImpl implements IOrderService {
 	public ServerResponse getOrderItems(Integer userId, List<Cart> cartList){
 		List<OrderItem> orderItemList = Lists.newArrayList();
 		if (CollectionUtils.isEmpty(cartList)){
-			return ServerResponse.createByFail("购物车为空");
+			return ServerResponse.createByFail("购物车中无待下单商品");
 		}
 		
 		// check cart data including goods' status and quantity
@@ -456,6 +458,66 @@ public class OrderServiceImpl implements IOrderService {
 		orderItemVo.setTotalPrice(orderItem.getTotalPrice());
 		orderItemVo.setCreateTime(DateTimeUtil.dateToStr(orderItem.getCreateTime()));
 		return orderItemVo;
+	}
+
+	/**
+	 * cancel order
+	 */
+	public ServerResponse cancel(Integer userId, Long orderNo) {
+		Order order = this.orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+		if (order == null){
+			return ServerResponse.createByFail("当前用户无该订单");
+		}
+		if (order.getStatus() != Const.OrderStatusEnum.NO_PAY.getCode()){
+			return ServerResponse.createByFail("已付款，无法取消订单，请尝试退款");
+		}
+		int resCnt = this.orderMapper.updateOrderStatus(order.getId(), Const.OrderStatusEnum.CANCELED.getCode());
+		if (resCnt > 0){
+			return ServerResponse.createBySuccess("取消订单成功");
+		}
+		return ServerResponse.createByFail("取消订单失败");
+	}
+
+	/**
+	 * show an order detail
+	 */
+	public ServerResponse getOrderDetail(Integer userId, Long orderNo) {
+		Order order = this.orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+		if (order == null){
+			return ServerResponse.createByFail("没有找到该订单");
+		}
+		List<OrderItem> orderItemList = this.orderItemMapper.selectByUserIdAndOrderNo(userId, orderNo);
+		OrderVO orderVo = this.assembleOrderVo(order, orderItemList);
+		return ServerResponse.createBySuccess(orderVo);
+	}
+
+	/**
+	 * list all order info of one user
+	 */
+	@SuppressWarnings("unchecked")
+	public ServerResponse getOrderList(Integer userId, int pageNum, int pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<Order> orderList = this.orderMapper.selectByUserId(userId);
+		List<OrderVO> orderVoList = this.assembleOrderVoList(orderList, userId);
+		PageInfo pageResult = new PageInfo(orderList);
+		pageResult.setList(orderVoList);
+		return ServerResponse.createBySuccess(pageResult);
+	}
+	
+	private List<OrderVO> assembleOrderVoList(List<Order> orderList, Integer userId){
+		List<OrderVO> orderVoList = Lists.newArrayList();
+		for (Order order : orderList){
+			List<OrderItem> orderItemList = Lists.newArrayList();
+			if (userId == null){
+				// if user is Administrator role, don't need parameter of userId 
+				orderItemList = this.orderItemMapper.selectByOrderNo(order.getOrderNo());
+			} else {
+				orderItemList = this.orderItemMapper.selectByUserIdAndOrderNo(userId, order.getOrderNo());
+			}
+			OrderVO orderVo = this.assembleOrderVo(order, orderItemList);
+			orderVoList.add(orderVo);
+		}
+		return orderVoList;
 	}
 	
 }

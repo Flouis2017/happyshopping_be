@@ -15,4 +15,10 @@ public interface IOrderService {
 
 	ServerResponse create(Integer userId, Integer shippingId);
 
+	ServerResponse cancel(Integer userId, Long orderNo);
+
+	ServerResponse getOrderDetail(Integer userId, Long orderNo);
+
+	ServerResponse getOrderList(Integer id, int pageNum, int pageSize);
+
 }

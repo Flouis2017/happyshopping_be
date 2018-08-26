@@ -3,7 +3,7 @@ package com.happyshopping.vo;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class OrderProductVO {
+public class OrderProductsVO {
 
 	private List<OrderItemVO> orderItemVoList;
     private BigDecimal productTotalPrice;
