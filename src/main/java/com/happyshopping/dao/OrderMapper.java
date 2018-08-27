@@ -1,5 +1,6 @@
 package com.happyshopping.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,8 @@ public interface OrderMapper {
 	int updateOrderStatus(@Param("id") Integer id, @Param("status") int status);
 
 	List<Order> selectByUserId(Integer userId);
+
+	List<Order> selectAllOrders();
+
+	int updateOrderAfterSending(@Param("orderNo") Long orderNo, @Param("status") int status, @Param("sendTime") Date sendTime);
 }

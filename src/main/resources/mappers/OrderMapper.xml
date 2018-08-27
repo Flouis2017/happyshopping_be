@@ -219,4 +219,16 @@
   	from hs_order where user_id = #{userId}
   	order by create_time desc
   </select>
+  
+  <select id="selectAllOrders" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from hs_order
+  	order by create_time desc
+  </select>
+  
+  <update id="updateOrderAfterSending" parameterType="map">
+  	update hs_order set status = #{status},
+  	send_time = #{sendTime}, update_time = now()
+  	where order_no = #{orderNo}
+  </update>
 </mapper>

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -518,6 +519,45 @@ public class OrderServiceImpl implements IOrderService {
 			orderVoList.add(orderVo);
 		}
 		return orderVoList;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	public ServerResponse manageList(int pageNum, int pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<Order> orderList = this.orderMapper.selectAllOrders();
+		List<OrderVO> orderVoList = this.assembleOrderVoList(orderList, null);
+		PageInfo pageResult = new PageInfo(orderList);
+		pageResult.setList(orderVoList);
+		return ServerResponse.createBySuccess(pageResult);
+	}
+
+	public ServerResponse manageDetail(Long orderNo) {
+		Order order = this.orderMapper.selectByOrderNo(orderNo);
+		if (order != null){
+			List<OrderItem> orderItemList = this.orderItemMapper.selectByOrderNo(orderNo);
+			OrderVO orderVo = this.assembleOrderVo(order, orderItemList);
+			return ServerResponse.createBySuccess(orderVo);
+		}
+		return ServerResponse.createByFail("订单不存在");
+	}
+
+	public ServerResponse manageSendGoods(Long orderNo) {
+		Order order = this.orderMapper.selectByOrderNo(orderNo);
+		if (order != null){
+			// update order status and send_time
+			if (order.getStatus() == Const.OrderStatusEnum.PAID.getCode()){
+				int status = Const.OrderStatusEnum.SHIPPED.getCode();
+				Date sendTime = new Date();
+				int resCnt = this.orderMapper.updateOrderAfterSending(orderNo, status, sendTime);
+				if (resCnt > 0){
+					return ServerResponse.createBySuccess("发货成功");
+				}
+				return ServerResponse.createByFail("发货失败");
+			}
+			return ServerResponse.createByFail("买家尚未付款");
+		}
+		return ServerResponse.createByFail("订单不存在");
 	}
 	
 }
