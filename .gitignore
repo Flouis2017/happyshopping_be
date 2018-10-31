@@ -15,7 +15,7 @@ target/
 .project
 .classpath
 
-# idea ingore
+# idea ignore
 .idea/
 /idea/
 *.ipr
@@ -27,6 +27,7 @@ target/
 *.cache
 *.diff
 *.patch
+*.path
 *.tmp
 
 # system ignore
